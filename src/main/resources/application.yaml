@@ -1,0 +1,11 @@
+spring:
+  liquibase:
+    enabled: true
+
+  datasource:
+    url:
+    username:
+    password:
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate.ddl-auto: none
