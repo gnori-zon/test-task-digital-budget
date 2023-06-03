@@ -1,4 +1,4 @@
-package org.gnori.testtaskdigitalbudget.service;
+package org.gnori.testtaskdigitalbudget.service.access.storage;
 
 import java.util.List;
 import java.util.Optional;

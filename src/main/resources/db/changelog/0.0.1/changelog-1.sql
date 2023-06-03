@@ -8,6 +8,7 @@ create table _user (
     email varchar(128) not null constraint uk_user_email unique,
     name varchar(128)
 );
+--rollback drop table _user;
 
 --changeset gnori:2
 --comment create table movie
@@ -18,6 +19,7 @@ create table movie (
 
     constraint uk_movie_ unique (title, poster_path)
 );
+--rollback drop table movie;
 
 --changeset gnori:3
 --comment create table favorites and binding with user and movie tables
@@ -25,3 +27,4 @@ create table favorites (
     user_id bigint not null constraint fk_favorites_user references _user,
     movie_id bigint not null constraint fk_favorites_movie references movie
 );
+--rollback drop table favorites;

@@ -5,4 +5,7 @@ import org.gnori.testtaskdigitalbudget.model.entity.impl.UserEntity;
 
 public interface UserDao extends BaseDao<UserEntity> {
 
+  boolean existsByUsername(String username);
+
+  boolean existsByEmail(String email);
 }

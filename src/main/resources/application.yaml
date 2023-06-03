@@ -8,4 +8,9 @@ spring:
     password:
     driver-class-name: org.postgresql.Driver
   jpa:
-    hibernate.ddl-auto: none
+    hibernate:
+      ddl-auto: none
+worker:
+  url: https://api.themoviedb.org/3/discover/movie
+  token:
+  requestInterval: "PT03H"
