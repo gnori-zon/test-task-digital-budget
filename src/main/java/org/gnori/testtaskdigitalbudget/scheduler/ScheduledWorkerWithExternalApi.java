@@ -5,7 +5,6 @@ import static org.gnori.testtaskdigitalbudget.scheduler.UtilsForRequest.prepareH
 
 import java.util.List;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.gnori.testtaskdigitalbudget.model.dto.MovieDto;
 import org.gnori.testtaskdigitalbudget.model.dto.external.ResponseFromExternalApiDto;
@@ -22,21 +21,28 @@ import org.springframework.web.client.RestTemplate;
 
 @Log4j2
 @Service
-@RequiredArgsConstructor
 public class ScheduledWorkerWithExternalApi {
 
   public static final String ERROR_TEXT = "[ScheduledWorkerWithExternalApi] threw {} with message {} \n stack trace: {}";
   private static final HttpMethod METHOD_GET = HttpMethod.GET;
 
-  private final RestTemplate restTemplate = new RestTemplate();
-
-  @Value("${worker.url}")
-  private String url;
-
-  @Value("${worker.token}")
-  private String token;
-
+  private final RestTemplate restTemplate;
   private final MovieService movieService;
+  private final String url;
+  private final String token;
+
+  public ScheduledWorkerWithExternalApi(
+      RestTemplate restTemplate,
+      MovieService movieService,
+      @Value("${worker.url}") String url,
+      @Value("${worker.token}") String token
+      ) {
+
+    this.restTemplate = restTemplate;
+    this.movieService = movieService;
+    this.url = url;
+    this.token = token;
+  }
 
   @Scheduled(fixedDelayString = "${worker.requestInterval}")
   public void requestAndSaveNewMovies() {

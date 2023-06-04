@@ -5,5 +5,5 @@ import org.gnori.testtaskdigitalbudget.model.entity.BaseEntity;
 
 public interface ListConverter<D, E extends BaseEntity> {
 
-  List<D> convertFrom(List<E> entityList);
+  List<D> convertList(List<E> entityList);
 }

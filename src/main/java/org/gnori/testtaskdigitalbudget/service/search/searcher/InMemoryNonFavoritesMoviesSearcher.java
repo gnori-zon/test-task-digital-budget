@@ -35,7 +35,7 @@ public class InMemoryNonFavoritesMoviesSearcher implements NonFavoritesMoviesSea
         .filter(movieEntity -> !setUserMovieId.contains(movieEntity.getId()))
         .collect(Collectors.toList());
 
-    return movieListConverter.convertFrom(allNonFavorites);
+    return movieListConverter.convertList(allNonFavorites);
   }
 
 }
