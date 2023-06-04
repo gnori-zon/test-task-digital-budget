@@ -13,7 +13,7 @@ public class PageRequestBuilder {
   public static PageRequest preparePageRequestWithPageAndSize(int page, int size) {
 
     if (page < 0) page = Integer.parseInt(DEFAULT_PAGE_NUMBER);
-    if (size < 0) size = Integer.parseInt(DEFAULT_PAGE_SIZE);
+    if (size < 1) size = Integer.parseInt(DEFAULT_PAGE_SIZE);
 
     return PageRequest.of(page, size);
   }

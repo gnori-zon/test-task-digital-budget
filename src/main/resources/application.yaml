@@ -10,7 +10,21 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+
 worker:
   url: https://api.themoviedb.org/3/discover/movie
   token:
   requestInterval: "PT03H"
+
+
+logging:
+  file:
+    name: application.log
+    path: src/
+    max-history: 1
+  pattern:
+    file: '%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n'
+  level:
+    sql: error
+    web: error
+    root: info

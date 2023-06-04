@@ -1,5 +1,6 @@
 package org.gnori.testtaskdigitalbudget.service.access.storage.impl;
 
+import lombok.extern.log4j.Log4j2;
 import org.gnori.testtaskdigitalbudget.converter.BaseConverter;
 import org.gnori.testtaskdigitalbudget.converter.PageConverter;
 import org.gnori.testtaskdigitalbudget.dao.iml.MovieDao;
@@ -11,8 +12,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+@Log4j2
 @Service
 public class MovieService extends AbstractService<MovieEntity, MovieDao> {
+
+  private static final String INFO_TEXT_SAVING = "[{}] saving: {} with id: {} ";
+
 
   private final BaseConverter<MovieDto, MovieEntity> movieConverter;
   private final PageConverter<MovieDto, MovieEntity> pageConverter;
@@ -34,7 +39,7 @@ public class MovieService extends AbstractService<MovieEntity, MovieDao> {
 
     if (title != null && posterPath != null && !dao.existsByTitleAndPosterPath(title, posterPath)) {
       var movieEntity = movieConverter.convertFrom(movieDto);
-      create(movieEntity);
+      this.create(movieEntity);
     }
   }
 
@@ -56,5 +61,20 @@ public class MovieService extends AbstractService<MovieEntity, MovieDao> {
         () -> new NotFoundException(
             String.format("movie with id: %d is not exist", movieId))
     );
+  }
+
+  @Override
+  public MovieEntity create(MovieEntity entity) {
+
+    entity =  super.create(entity);
+
+    log.info(
+        INFO_TEXT_SAVING,
+        this.getClass().getSimpleName(),
+        entity.getClass().getSimpleName(),
+        entity.getId()
+    );
+
+    return entity;
   }
 }

@@ -27,7 +27,7 @@ public class NonFavoritesMoviesSearcherContainer {
 
      searcherMap.put(
          LoaderType.SQL.getStringRepresentation(),
-         new SqlNonFavoritesMoviesSearcher(movieDao, movieListConverter));
+         new SqlNonFavoritesMoviesSearcher(movieDao, userDao, movieListConverter));
 
      searcherMap.put(
          LoaderType.IN_MEMORY.getStringRepresentation(),

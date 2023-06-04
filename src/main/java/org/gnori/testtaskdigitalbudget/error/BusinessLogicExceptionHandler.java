@@ -5,7 +5,9 @@ import org.gnori.testtaskdigitalbudget.error.exception.BusinessLogicException;
 import org.gnori.testtaskdigitalbudget.model.dto.error.ErrorDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -40,6 +42,20 @@ public class BusinessLogicExceptionHandler {
 
       errorDto.setError(status.getReasonPhrase());
       errorDto.setFieldsErrors(fieldsErrors);
+
+    } else if (
+        ex instanceof MissingRequestHeaderException || ex instanceof HttpMessageNotReadableException
+    ) {
+
+      status = HttpStatus.BAD_REQUEST;
+      errorDto.setError(status.getReasonPhrase());
+
+      if (ex instanceof MissingRequestHeaderException) {
+        errorDto.setErrorDescription("missing header");
+      } else {
+        errorDto.setErrorDescription("not readable body");
+      }
+
     } else {
 
       errorDto.setError(status.getReasonPhrase());

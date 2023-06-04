@@ -37,11 +37,15 @@ public class MovieConverter implements BaseConverter<MovieDto, MovieEntity>,
   @Override
   public Page<MovieDto> convertPage(Page<MovieEntity> movieEntityPage) {
 
-    return new PageImpl<>(movieEntityPage.map(this::convertFrom).toList());
+    return  new PageImpl<>(
+        movieEntityPage.map(this::convertFrom).toList(),
+        movieEntityPage.getPageable(),
+        movieEntityPage.getTotalElements()
+    );
   }
 
   @Override
-  public List<MovieDto> convertFrom(List<MovieEntity> entityList) {
+  public List<MovieDto> convertList(List<MovieEntity> entityList) {
 
     return entityList.stream().map(this::convertFrom).collect(Collectors.toList());
   }
