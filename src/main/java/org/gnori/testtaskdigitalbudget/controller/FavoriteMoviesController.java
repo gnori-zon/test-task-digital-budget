@@ -36,6 +36,7 @@ public class FavoriteMoviesController {
     return favoriteMoviesService.addInFavoritesByUserIdAndMovieId(userId, movieId);
   }
 
+  @ResponseStatus(HttpStatus.OK)
   @GetMapping(NON_FAVORITES_URL)
   public List<MovieDto> getAllNonFavoriteMovies(
       @RequestHeader(name = AUTH_HEADER) Integer userId,
