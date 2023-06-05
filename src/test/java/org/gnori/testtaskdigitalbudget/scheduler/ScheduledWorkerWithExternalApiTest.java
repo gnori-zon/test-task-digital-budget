@@ -6,6 +6,7 @@ import org.gnori.testtaskdigitalbudget.model.dto.external.MoviesFromExternalApiD
 import org.gnori.testtaskdigitalbudget.model.dto.external.ResponseFromExternalApiDto;
 import org.gnori.testtaskdigitalbudget.service.access.storage.impl.MovieService;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -21,6 +22,7 @@ class ScheduledWorkerWithExternalApiTest {
 
   private final String url = "http://testUrl";
   private final String token = "testToken";
+  private ResponseFromExternalApiDto body;
 
   private final RestTemplate restTemplateMock = Mockito.mock(RestTemplate.class);
   private final MovieService movieServiceMock = Mockito.mock(MovieService.class);
@@ -28,10 +30,10 @@ class ScheduledWorkerWithExternalApiTest {
   private final ScheduledWorkerWithExternalApi workerWithExternalApi =
       new ScheduledWorkerWithExternalApi(restTemplateMock, movieServiceMock, url, token);
 
-  @Test
-  void requestAndSaveNewMovieSuccess() {
+  @BeforeEach
+  void setUp(){
 
-    var body = ResponseFromExternalApiDto.builder()
+    body  = ResponseFromExternalApiDto.builder()
         .page(1)
         .results(List.of(
             MoviesFromExternalApiDto.builder()
@@ -48,6 +50,10 @@ class ScheduledWorkerWithExternalApiTest {
         .totalPages(12)
         .totalResults(2)
         .build();
+  }
+
+  @Test
+  void requestAndSaveNewMovieSuccess() {
 
     var responseEntity = new ResponseEntity<>(body, HttpStatus.OK);
 
@@ -69,9 +75,45 @@ class ScheduledWorkerWithExternalApiTest {
 
     workerWithExternalApi.requestAndSaveNewMovies();
 
+    var expectedTime = body.getTotalPages() < 5? body.getTotalPages() : 5;
+
     expectedMoviesDto.forEach(
         movieDto -> Mockito
-            .verify(movieServiceMock, Mockito.times(5))
+            .verify(movieServiceMock, Mockito.times(expectedTime))
+            .createIfExist(movieDto)
+    );
+  }
+
+  @Test
+  void requestAndSaveNewMovieWhenTotalPageLessThanFive() {
+
+    body.setPage(3);
+
+    var responseEntity = new ResponseEntity<>(body, HttpStatus.OK);
+
+    Mockito.when(restTemplateMock.exchange(
+        Mockito.anyString(),
+        Mockito.any(HttpMethod.class),
+        Mockito.any(HttpEntity.class),
+        Mockito.eq(ResponseFromExternalApiDto.class)
+    )).thenReturn(responseEntity);
+
+    var expectedMoviesDto = responseEntity.getBody().getResults()
+        .stream()
+        .map(
+            moviesFromExternalApiDto -> MovieDto.builder()
+                .title(moviesFromExternalApiDto.getTitle())
+                .posterPath(moviesFromExternalApiDto.getPosterPath())
+                .build()
+        );
+
+    workerWithExternalApi.requestAndSaveNewMovies();
+
+    var expectedTime = body.getTotalPages() < 5? body.getTotalPages() : 5;
+
+    expectedMoviesDto.forEach(
+        movieDto -> Mockito
+            .verify(movieServiceMock, Mockito.times(expectedTime))
             .createIfExist(movieDto)
     );
   }

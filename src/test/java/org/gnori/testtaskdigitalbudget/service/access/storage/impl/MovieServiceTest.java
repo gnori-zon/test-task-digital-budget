@@ -48,6 +48,8 @@ class MovieServiceTest {
 
     Mockito.when(movieDaoMock.existsByTitleAndPosterPath(movieDto.getTitle(), movieDto.getPosterPath()))
         .thenReturn(false);
+    Mockito.when(movieDaoMock.saveAndFlush(Mockito.any()))
+        .thenReturn(movieConverter.convertFrom(movieDto));
 
     movieService.createIfExist(movieDto);
 
