@@ -30,6 +30,8 @@ public class ScheduledWorkerWithExternalApi {
   private final MovieService movieService;
   private final String url;
   private final String token;
+  private Integer currentPage;
+  private Integer totalPage;
 
   public ScheduledWorkerWithExternalApi(
       RestTemplate restTemplate,
@@ -42,6 +44,9 @@ public class ScheduledWorkerWithExternalApi {
     this.movieService = movieService;
     this.url = url;
     this.token = token;
+    currentPage = 1;
+    totalPage = 1;
+
   }
 
   @Scheduled(fixedDelayString = "${worker.requestInterval}")
@@ -52,13 +57,23 @@ public class ScheduledWorkerWithExternalApi {
         token
     );
 
-    for (int page = 1; page <= 5; page ++) {
+    if (currentPage > totalPage) currentPage--;
+
+    var numberLastPage = currentPage + 5;
+
+    for (int page = currentPage; page < numberLastPage && page <= totalPage; page++) {
       var uri = prepareCommonUriForGetMoviesWithPage(page, url);
 
       var optionalResponseEntity = getResponseFromExternalApi(uri, METHOD_GET, requestEntity);
 
       optionalResponseEntity.ifPresent(
-          responseEntity -> saveAllNewMovie(responseEntity.getBody())
+          responseEntity -> {
+            var body = responseEntity.getBody();
+            if (body != null) {
+              totalPage =  body.getTotalPages();
+              saveAllNewMovie(body);
+            }
+          }
       );
     }
   }

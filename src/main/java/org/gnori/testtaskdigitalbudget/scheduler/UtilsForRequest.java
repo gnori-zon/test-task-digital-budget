@@ -18,7 +18,7 @@ public class UtilsForRequest {
         .queryParam("include_video", false)
         .queryParam("language", "en-US")
         .queryParam("page", page)
-        .queryParam("sort_by", "primary_release_date.desc")
+        .queryParam("sort_by", "primary_release_date.asc")
         .toUriString();
   }
 
